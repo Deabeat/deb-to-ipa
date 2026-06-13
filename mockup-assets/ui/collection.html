@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; }
+  html, body { width: 390px; height: 844px; overflow: hidden; }
+  body {
+    font-family: "Inter", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: radial-gradient(120% 70% at 50% -10%, #232a45 0%, #11141f 55%, #0b0d14 100%);
+    color: #f2f4fa; position: relative;
+  }
+  .statusbar { display:flex; justify-content:space-between; align-items:center; padding:14px 28px 6px; font-size:15px; font-weight:600; }
+  .sb-icons { display:flex; gap:6px; align-items:center; }
+  .sb-icons svg { display:block; }
+
+  .header { padding: 6px 20px 0; }
+  .header-row { display:flex; justify-content:space-between; align-items:center; }
+  h1 { font-size: 30px; font-weight: 800; letter-spacing: 1.5px; }
+  .subtitle { font-size: 12.5px; color:#8b93ad; margin-top:2px; letter-spacing:.3px; }
+  .currency { display:flex; gap:8px; }
+  .chip { display:flex; align-items:center; gap:5px; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.12); border-radius:999px; padding:5px 10px; font-size:12.5px; font-weight:700; }
+  .gem { width:11px; height:11px; background:linear-gradient(135deg,#6ee7f5,#4f7cf0); transform:rotate(45deg); border-radius:2.5px; }
+  .coin { width:12px; height:12px; background:linear-gradient(135deg,#ffd76a,#f0a23c); border-radius:50%; }
+
+  .filters { display:flex; gap:8px; padding:12px 20px 2px; }
+  .filter { font-size:12.5px; font-weight:700; padding:7px 14px; border-radius:999px; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); color:#9aa2bc; }
+  .filter.active { background:linear-gradient(135deg,#5b8cff,#7a5bff); color:#fff; border-color:transparent; box-shadow:0 4px 14px rgba(99,199,255,.25); }
+  .count { padding:8px 22px 4px; font-size:11.5px; font-weight:700; letter-spacing:1.2px; color:#6f7894; }
+
+  .grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; padding:4px 16px; }
+  .card {
+    position:relative; border-radius:18px; overflow:hidden;
+    background:linear-gradient(180deg, rgba(255,255,255,.07), rgba(255,255,255,.02));
+    border:1px solid rgba(255,255,255,.12);
+  }
+  .card .art { width:100%; height:118px; object-fit:cover; object-position:center 12%; display:block; }
+  .card .info { padding:9px 11px 11px; }
+  .card .name { font-size:14.5px; font-weight:800; letter-spacing:.4px; }
+  .card .meta { display:flex; align-items:center; justify-content:space-between; margin-top:5px; }
+  .tag { font-size:10px; font-weight:800; letter-spacing:.6px; padding:3px 8px; border-radius:6px; }
+  .tag.verdant { background:rgba(168,201,58,.18); color:#c8e360; }
+  .tag.umbral { background:rgba(186,107,240,.18); color:#d49bff; }
+  .tag.ember { background:rgba(255,122,47,.18); color:#ffa067; }
+  .lv { font-size:11.5px; font-weight:700; color:#aeb6cf; }
+  .bond-badge {
+    position:absolute; top:8px; right:8px; width:30px; height:30px; border-radius:10px;
+    background:rgba(10,12,20,.72); border:1px solid rgba(255,255,255,.22);
+    display:flex; align-items:center; justify-content:center; backdrop-filter:blur(4px);
+  }
+  .rarity { position:absolute; top:8px; left:8px; display:flex; gap:2px; }
+  .star { width:0; height:0; border-left:5px solid transparent; border-right:5px solid transparent; border-bottom:8px solid #ffd76a; filter:drop-shadow(0 1px 2px rgba(0,0,0,.6)); }
+  .card.locked { border-style:dashed; border-color:rgba(255,255,255,.14); background:rgba(255,255,255,.025); }
+  .card.locked .silhouette { height:118px; display:flex; align-items:center; justify-content:center; font-size:44px; font-weight:900; color:rgba(255,255,255,.10); }
+  .card.locked .name { color:#5d6480; }
+  .card.locked .hint { font-size:10.5px; color:#494f68; margin-top:5px; }
+
+  .tabbar {
+    position:absolute; bottom:0; left:0; right:0; height:86px;
+    background:rgba(13,15,24,.92); border-top:1px solid rgba(255,255,255,.08);
+    display:flex; justify-content:space-around; padding:10px 8px 26px; backdrop-filter:blur(10px);
+  }
+  .tab { display:flex; flex-direction:column; align-items:center; gap:4px; font-size:10px; font-weight:700; color:#5d6480; width:64px; }
+  .tab.active { color:#7ab4ff; }
+  .tab svg { display:block; }
+  .home-indicator { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:rgba(255,255,255,.35); }
+</style>
+</head>
+<body>
+  <div class="statusbar">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <svg width="18" height="11" viewBox="0 0 18 11" fill="#fff"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="6" rx="1"/><rect x="10" y="2.5" width="3" height="8.5" rx="1"/><rect x="15" y="0" width="3" height="11" rx="1"/></svg>
+      <svg width="16" height="11" viewBox="0 0 16 11" fill="#fff"><path d="M8 9.5a1.4 1.4 0 110 2.8 1.4 1.4 0 010-2.8z" transform="translate(0,-1.6)"/><path d="M8 6.5c1.5 0 2.9.6 3.9 1.6l-1.3 1.3a3.6 3.6 0 00-5.2 0L4.1 8.1c1-1 2.4-1.6 3.9-1.6z"/><path d="M8 3.2c2.4 0 4.6 1 6.2 2.6l-1.3 1.3A6.7 6.7 0 008 5.2c-1.9 0-3.6.8-4.9 2L1.8 5.8C3.4 4.2 5.6 3.2 8 3.2z"/><path d="M8 0c3.3 0 6.3 1.3 8.5 3.5l-1.3 1.3A10 10 0 008 2C5.4 2 3 3 1.2 4.8L0 3.5A12 12 0 018 0z"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity=".5" fill="none"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="#fff"/><rect x="22.5" y="4" width="2" height="4" rx="1" fill="#fff" fill-opacity=".5"/></svg>
+    </div>
+  </div>
+
+  <div class="header">
+    <div class="header-row">
+      <div>
+        <h1>WILDBONDS</h1>
+        <div class="subtitle">Your living armory &middot; 3 of 24 bonded</div>
+      </div>
+      <div class="currency">
+        <div class="chip"><span class="gem"></span>1,240</div>
+        <div class="chip"><span class="coin"></span>86k</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="filters">
+    <div class="filter active">All</div>
+    <div class="filter">Ember</div>
+    <div class="filter">Umbral</div>
+    <div class="filter">Verdant</div>
+  </div>
+  <div class="count">SORT: BOND LEVEL ▾</div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="rarity"><div class="star"></div><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <div class="bond-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#ffa067" stroke-width="2.4" stroke-linecap="round"><path d="M6 18L18 6M14 6h4v4M9 15l-4 4M6 15l3 3"/></svg></div>
+      <img class="art" src="../creature_emberward_concept.png">
+      <div class="info">
+        <div class="name">Emberward</div>
+        <div class="meta"><span class="tag ember">EMBER</span><span class="lv">Lv 24</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="rarity"><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <div class="bond-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#d49bff" stroke-width="2.4" stroke-linecap="round"><path d="M12 3v18M12 3l5 4M12 3L7 7M8 21h8"/></svg></div>
+      <img class="art" src="../creature_duskreaver_concept.png">
+      <div class="info">
+        <div class="name">Duskreaver</div>
+        <div class="meta"><span class="tag umbral">UMBRAL</span><span class="lv">Lv 19</span></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="rarity"><div class="star"></div><div class="star"></div><div class="star"></div></div>
+      <div class="bond-badge"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#c8e360" stroke-width="2.4" stroke-linecap="round"><path d="M12 21V7M12 7l3-4M12 7L9 3M9 17h6"/></svg></div>
+      <img class="art" src="../creature_petalshiv_concept.png">
+      <div class="info">
+        <div class="name">Petalshiv</div>
+        <div class="meta"><span class="tag verdant">VERDANT</span><span class="lv">Lv 11</span></div>
+      </div>
+    </div>
+    <div class="card locked">
+      <div class="silhouette">?</div>
+      <div class="info">
+        <div class="name">Undiscovered</div>
+        <div class="hint">Roams the Cinder Steppe</div>
+      </div>
+    </div>
+    <div class="card locked">
+      <div class="silhouette">?</div>
+      <div class="info">
+        <div class="name">Undiscovered</div>
+        <div class="hint">Roams the Glasswood</div>
+      </div>
+    </div>
+    <div class="card locked">
+      <div class="silhouette">?</div>
+      <div class="info">
+        <div class="name">Undiscovered</div>
+        <div class="hint">Hatches from Storm Eggs</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="tabbar">
+    <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 11l9-8 9 8v9a2 2 0 01-2 2h-4v-6h-6v6H5a2 2 0 01-2-2z"/></svg>Home</div>
+    <div class="tab active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7c2 2 2 4 0 5s-2 3 0 5"/><circle cx="12" cy="12" r="1.6" fill="currentColor"/></svg>Wildbonds</div>
+    <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 18L18 6M14 6h4v4M9 15l-4 4M6 15l3 3"/></svg>Armory</div>
+    <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M13 2L4 14h6l-1 8 9-12h-6z"/></svg>Arena</div>
+    <div class="tab"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 7h12l1.5 13.5H4.5zM9 10V5a3 3 0 016 0v5"/></svg>Shop</div>
+  </div>
+  <div class="home-indicator"></div>
+</body>
+</html>

@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; -webkit-font-smoothing:antialiased; }
+  html, body { width:390px; height:844px; overflow:hidden; }
+  body {
+    font-family:"Inter", -apple-system, "Helvetica Neue", Arial, sans-serif;
+    background: radial-gradient(120% 60% at 50% -5%, #16243d 0%, #121420 50%, #0b0d14 100%);
+    color:#f2f4fa; position:relative;
+  }
+  .statusbar { display:flex; justify-content:space-between; align-items:center; padding:14px 28px 6px; font-size:15px; font-weight:600; }
+  .sb-icons { display:flex; gap:6px; align-items:center; }
+
+  .nav { display:flex; align-items:center; justify-content:space-between; padding:8px 20px 0; }
+  .back { width:36px; height:36px; border-radius:12px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12); display:flex; align-items:center; justify-content:center; }
+  .nav-title { font-size:12px; font-weight:800; letter-spacing:2px; color:#8b93ad; }
+
+  .hero { position:relative; display:flex; justify-content:center; margin-top:2px; }
+  .hero-glow { position:absolute; top:30px; width:250px; height:250px; border-radius:50%;
+    background:radial-gradient(circle, rgba(110,196,255,.25) 0%, rgba(110,196,255,0) 70%); }
+  .hero img { position:relative; width:264px; height:240px; object-fit:cover; object-position:center 90%; border-radius:24px;
+    background:#ECEDEF; border:1px solid rgba(255,255,255,.14); box-shadow:0 18px 50px rgba(0,0,0,.55); }
+  .bonded {
+    position:absolute; bottom:-14px; left:50%; transform:translateX(-50%);
+    display:flex; align-items:center; gap:8px; background:rgba(13,15,24,.92); border:1px solid rgba(255,255,255,.16);
+    border-radius:999px; padding:6px 12px 6px 7px; font-size:11.5px; font-weight:800; letter-spacing:.4px; white-space:nowrap;
+  }
+  .bonded img { width:26px; height:26px; border-radius:50%; object-fit:cover; object-position:center 10%; border:1px solid rgba(255,255,255,.3); box-shadow:none; }
+  .bonded span em { font-style:normal; color:#ffa067; }
+
+  .title-row { display:flex; align-items:center; justify-content:center; gap:10px; margin-top:22px; }
+  h1 { font-size:21px; font-weight:800; letter-spacing:1px; white-space:nowrap; }
+  .tag { font-size:11px; font-weight:800; letter-spacing:.8px; padding:5px 11px; border-radius:8px; background:rgba(110,196,255,.16); color:#8fd0ff; }
+  .sub { text-align:center; font-size:12.5px; color:#8b93ad; margin-top:4px; }
+
+  .seg { display:flex; margin:10px 20px 0; background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.10); border-radius:14px; padding:4px; }
+  .seg div { flex:1; text-align:center; font-size:13px; font-weight:800; padding:9px 0; border-radius:11px; color:#8b93ad; letter-spacing:.4px; }
+  .seg .on { background:linear-gradient(135deg,#5b8cff,#3c6df0); color:#fff; box-shadow:0 4px 14px rgba(80,130,255,.35); }
+
+  .panel { margin:10px 20px 0; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:18px; padding:12px 16px; }
+  .bar { height:8px; border-radius:5px; background:rgba(255,255,255,.09); overflow:hidden; }
+  .bar i { display:block; height:100%; border-radius:5px; }
+  .stats { display:grid; grid-template-columns:1fr 1fr; gap:10px 22px; margin-top:4px; }
+  .stat { padding:4px 0; }
+  .stat .label-row { display:flex; justify-content:space-between; font-size:11.5px; font-weight:800; margin-bottom:5px; }
+  .stat .label-row span:first-child { color:#8b93ad; letter-spacing:1px; }
+  .dmg i { width:90%; background:linear-gradient(90deg,#ff9a5a,#ff5a3c); }
+  .grd i { width:84%; background:linear-gradient(90deg,#6ec4ff,#4f7cf0); }
+  .crt i { width:46%; background:linear-gradient(90deg,#ffd76a,#ff9a3d); }
+  .wgt i { width:66%; background:linear-gradient(90deg,#d8a6ff,#a36bf0); }
+
+  .section-title { font-size:11px; font-weight:800; letter-spacing:1.6px; color:#6f7894; margin:12px 22px 0; }
+  .traits { display:flex; gap:10px; margin:8px 20px 0; }
+  .trait { flex:1; background:rgba(255,255,255,.05); border:1px solid rgba(255,255,255,.10); border-radius:14px; padding:11px 12px; }
+  .trait .t-name { font-size:13px; font-weight:800; }
+  .trait .t-desc { font-size:10.5px; color:#8b93ad; margin-top:3px; line-height:1.35; }
+  .trait .t-tag { font-size:9.5px; font-weight:800; color:#8fd0ff; margin-top:5px; letter-spacing:.6px; }
+
+  .sync { margin:10px 20px 0; display:flex; align-items:center; gap:8px; background:rgba(255,215,106,.07); border:1px solid rgba(255,215,106,.25); border-radius:12px; padding:8px 12px; font-size:11px; color:#ffd76a; font-weight:700; line-height:1.3; white-space:nowrap; }
+
+  .cta {
+    position:absolute; left:20px; right:20px; bottom:34px; height:56px; border-radius:18px;
+    background:rgba(255,255,255,.08); border:1.5px solid rgba(255,255,255,.22);
+    display:flex; align-items:center; justify-content:center; gap:10px;
+    font-size:15px; font-weight:800; letter-spacing:1px;
+  }
+  .home-indicator { position:absolute; bottom:8px; left:50%; transform:translateX(-50%); width:134px; height:5px; border-radius:3px; background:rgba(255,255,255,.35); }
+</style>
+</head>
+<body>
+  <div class="statusbar">
+    <span>9:41</span>
+    <div class="sb-icons">
+      <svg width="18" height="11" viewBox="0 0 18 11" fill="#fff"><rect x="0" y="7" width="3" height="4" rx="1"/><rect x="5" y="5" width="3" height="6" rx="1"/><rect x="10" y="2.5" width="3" height="8.5" rx="1"/><rect x="15" y="0" width="3" height="11" rx="1"/></svg>
+      <svg width="25" height="12" viewBox="0 0 25 12"><rect x="0.5" y="0.5" width="21" height="11" rx="3" stroke="#fff" stroke-opacity=".5" fill="none"/><rect x="2" y="2" width="15" height="8" rx="1.6" fill="#fff"/><rect x="22.5" y="4" width="2" height="4" rx="1" fill="#fff" fill-opacity=".5"/></svg>
+    </div>
+  </div>
+
+  <div class="nav">
+    <div class="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.6" stroke-linecap="round"><path d="M15 5l-7 7 7 7"/></svg></div>
+    <div class="nav-title">ARMORY &middot; EMBERWARD</div>
+    <div class="back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="2.2" fill="#fff"/><circle cx="5" cy="12" r="2.2" fill="#fff"/><circle cx="19" cy="12" r="2.2" fill="#fff"/></svg></div>
+  </div>
+
+  <div class="hero">
+    <div class="hero-glow"></div>
+    <img src="../weapon_emberward.jpeg">
+    <div class="bonded"><img src="../creature_emberward_concept.png"><span>BONDED &middot; <em>EMBERWARD</em></span></div>
+  </div>
+
+  <div class="title-row"><h1>CINDERFANG &amp; AEGIS</h1><span class="tag">SWORD + SHIELD</span></div>
+  <div class="sub">Armory Form &middot; Forged Bond Lv 24</div>
+
+  <div class="seg"><div>CREATURE</div><div class="on">ARMORY FORM</div></div>
+
+  <div class="panel">
+    <div class="stats">
+      <div class="stat dmg"><div class="label-row"><span>DAMAGE</span><span>486</span></div><div class="bar"><i></i></div></div>
+      <div class="stat grd"><div class="label-row"><span>GUARD</span><span>352</span></div><div class="bar"><i></i></div></div>
+      <div class="stat crt"><div class="label-row"><span>CRIT</span><span>14%</span></div><div class="bar"><i></i></div></div>
+      <div class="stat wgt"><div class="label-row"><span>WEIGHT</span><span>Med</span></div><div class="bar"><i></i></div></div>
+    </div>
+  </div>
+
+  <div class="section-title">WEAPON TRAITS</div>
+  <div class="traits">
+    <div class="trait">
+      <div class="t-name">Lava Vein Edge</div>
+      <div class="t-desc">Heavy strikes leave burning trails for 4s.</div>
+      <div class="t-tag">PASSIVE</div>
+    </div>
+    <div class="trait">
+      <div class="t-name">Crystal Aegis</div>
+      <div class="t-desc">Perfect block releases a violet shockwave.</div>
+      <div class="t-tag">ON BLOCK</div>
+    </div>
+  </div>
+
+  <div class="sync">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#ffd76a" stroke-width="2.2" stroke-linecap="round"><path d="M12 3v3M12 18v3M3 12h3M18 12h3M5.6 5.6l2.1 2.1M16.3 16.3l2.1 2.1M18.4 5.6l-2.1 2.1M7.7 16.3l-2.1 2.1"/></svg>
+    Bond Sync 92% &mdash; next Trait slot unlocks at 100%
+  </div>
+
+  <div class="cta">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M4 12a8 8 0 0113.6-5.7M20 12a8 8 0 01-13.6 5.7M17.6 2v4.3h-4.3M6.4 22v-4.3h4.3"/></svg>
+    REVERT TO WILDBOND
+  </div>
+  <div class="home-indicator"></div>
+</body>
+</html>
